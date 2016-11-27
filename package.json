@@ -1,0 +1,27 @@
+{
+  "name": "botwork",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Bot framework",
+  "keywords": [
+    "bot",
+    "messenger",
+    "telegramm"
+  ],
+  "dependencies": {
+    "restler": "3.4.0",
+    "request": "2.79.0",
+    "path": "^0.12.7",
+    "crypto": "0.0.3",
+    "lodash": "4.17.0"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": "7.1.*",
+    "npm": "3.10.*"
+  },
+  "main": "index.js",
+  "author": "azayarni",
+  "license": "MIT"
+}
