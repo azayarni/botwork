@@ -37,6 +37,7 @@ module.exports = (config) => {
                         opts.Key = path;
                         opts.Body = data;
 
+
                         s3.putObject(opts, (err, data) => {
                             if (err) return reject(err);
 
@@ -44,6 +45,34 @@ module.exports = (config) => {
                         });
 
                     })
+                });
+
+            },
+
+            uploadB64(body, path, opts = {}) {
+
+                let buf = Buffer.from(body, 'base64');
+
+                opts.ACL = opts.ACL || "public-read";
+
+                options = {
+                    encoding: null
+                }
+
+                return new Promise((resolve, reject) => {
+
+                    let s3 = new AWS.S3({ accessKeyId: config.key, secretAccessKey: config.secret, region: config.s3.region });
+
+                    opts.Bucket = config.s3.bucket;
+                    opts.Key = path;
+                    opts.Body = buf;
+
+                    s3.putObject(opts, (err, data) => {
+                        if (err) return reject(err);
+
+                        resolve(data);
+                    });
+
                 });
 
             },
