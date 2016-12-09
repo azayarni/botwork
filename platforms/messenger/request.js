@@ -82,7 +82,7 @@ module.exports = class Request {
     isYes(words) {
 
         let answer = false;
-        let yes = ["$yes", "yes", "yep", "right", "ok", "yup", "fine", "sure", "k", "ah", "aha", "ja", "jup", "true", "kk"];
+        let yes = ["$yes", "yes", "yep", "right", "ok", "yup", "fine", "sure", "k", "ah", "aha", "ja", "jup", "true", "kk", "agree"];
 
         yes.forEach((str) => {
             words.forEach((word) => {
@@ -124,19 +124,13 @@ module.exports = class Request {
         this.sess._next = cb;
     }
 
-    yesOrNo(onYes, onNo, onOther = false) {
+    yesOrNo(onYes, onNo) {
         if (this.yes) {
 
             return onYes(this);
         }
 
-        if (this.no && !onOther) {
-            return onNo(this, false);
-        }
-
-        onOther(this);
-
-        
+        onNo(this, false);   
     }
 
     sendText(text) {
