@@ -11,6 +11,10 @@ module.exports = class Request {
         this.parseRequestMessage(req);
 
         event.emit("messenger_message_in", this);
+
+        this.isYes = this.isYes.bind(this);
+        this.isNo = this.isNo.bind(this);
+        this.isSkip = this.isSkip.bind(this);
     }
 
     parseRequestMessage(req) {
@@ -49,17 +53,64 @@ module.exports = class Request {
             this.payload = this.payload.toLowerCase();
         }
 
-        this.yes = false;
+        let words = this.payload.split(/[ ,]+/);
 
-        let yesish = ["$yes", "yes", "yep", "right", "ok", "yup", "fine", "sure", "k", "ah", "aha", "ja", "jup"];
+        this.yes = this.isYes(words);
+        this.no = this.isNo(words);
 
-        yesish.forEach((str) => {
-            if (this.payload.toLowerCase().indexOf(str) === 0) {
-                this.yes = true;
-            }
+        this.skip = this.isSkip(words) || this.yes;
+
+    }
+
+    isSkip(words) {
+
+        let answer = false;
+        let skip = ["$skip", "skip", "next"];
+
+        skip.forEach((str) => {
+            words.forEach((word) => {
+                if (word  == str) {
+                    answer = true;
+                }
+            });
+
         });
 
-        this.skip = this.payload === "$skip";
+        return answer;
+    }
+
+    isYes(words) {
+
+        let answer = false;
+        let yes = ["$yes", "yes", "yep", "right", "ok", "yup", "fine", "sure", "k", "ah", "aha", "ja", "jup", "true", "kk", "agree"];
+
+        yes.forEach((str) => {
+            words.forEach((word) => {
+                if (word  == str) {
+                    answer = true;
+                }
+            });
+
+        });
+
+        return answer;
+    }
+
+    isNo(words) {
+
+        let answer = false;
+        let no = ["$no", "no", "nope", "noo", "nah", "false", "wrong", "ne", "nein", "not", "uh-uh"];
+
+        no.forEach((str) => {
+            words.forEach((word) => {
+                if (word  == str) {
+                    answer = true;
+                }
+            });
+
+        });
+
+        return answer;
     }
 
     _(name, params) {
@@ -79,7 +130,7 @@ module.exports = class Request {
             return onYes(this);
         }
 
-        onNo(this, false);
+        onNo(this, false);   
     }
 
     sendText(text) {
