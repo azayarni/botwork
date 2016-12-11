@@ -75,6 +75,30 @@ const $this = {
         );
     },
 
+    sendUrlButton(recipient_id, text, title, url, ratio = "full") {
+
+        let btn = {
+            "type": "web_url",
+            "url": url,
+            "title": title,
+            "webview_height_ratio": ratio
+        };
+
+        let menu = {
+            type: "template",
+            payload: {
+                template_type: "button",
+                text: text,
+                buttons: [btn]
+            }
+        };
+
+        return $this.sendMessage(
+            recipient_id,
+            { attachment: menu }
+        );
+    },
+
     sendTyping(recipient_id) {
 
         let data = {

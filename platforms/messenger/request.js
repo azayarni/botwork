@@ -101,6 +101,10 @@ module.exports = class Request {
         return client.sendGeneric(this.uid, elements);
     }
 
+    sendUrlButton(text, title, url, ratio = "full") {
+        return client.sendUrlButton(this.uid, text, title, url, ratio);
+    }
+
     sendOptions(text, options = { $yes: "Yes, please.", $no: "No, thanx" }) {
         
         return client.sendOptions(this.uid, text, options);
