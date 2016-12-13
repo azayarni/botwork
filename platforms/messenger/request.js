@@ -12,9 +12,11 @@ module.exports = class Request {
 
         event.emit("messenger_message_in", this);
 
-        this.isYes = this.isYes.bind(this);
-        this.isNo = this.isNo.bind(this);
-        this.isSkip = this.isSkip.bind(this);
+        this._isYes = this._isYes.bind(this);
+        this._isNo = this._isNo.bind(this);
+        this._isSkip = this._isSkip.bind(this);
+        this._translate = this._translate.bind(this);
+        this._translateButtons = this._translateButtons.bind(this);
     }
 
     parseRequestMessage(req) {
@@ -55,14 +57,14 @@ module.exports = class Request {
 
         let words = this.payload.split(/[ ,]+/);
 
-        this.yes = this.isYes(words);
-        this.no = this.isNo(words);
+        this.yes = this._isYes(words);
+        this.no = this._isNo(words);
 
-        this.skip = this.isSkip(words) || this.yes;
+        this.skip = this._isSkip(words) || this.yes;
 
     }
 
-    isSkip(words) {
+    _isSkip(words) {
 
         let answer = false;
         let skip = ["$skip", "skip", "next"];
@@ -79,7 +81,7 @@ module.exports = class Request {
         return answer;
     }
 
-    isYes(words) {
+    _isYes(words) {
 
         let answer = false;
         let yes = ["$yes", "yes", "yep", "right", "ok", "yup", "fine", "sure", "k", "ah", "aha", "ja", "jup", "true", "kk", "agree"];
@@ -96,7 +98,7 @@ module.exports = class Request {
         return answer;
     }
 
-    isNo(words) {
+    _isNo(words) {
 
         let answer = false;
         let no = ["$no", "no", "nope", "noo", "nah", "false", "wrong", "ne", "nein", "not", "uh-uh"];
@@ -156,18 +158,47 @@ module.exports = class Request {
         return client.sendUrlButton(this.uid, text, title, url, ratio);
     }
 
-    sendOptions(text, options = { $yes: "Yes, please.", $no: "No, thanx" }) {
-        
+    sendOptions(text, options = { $yes: "_btn_yes", $no: "_btn_no" }) {
+
+        options = this._translateButtons(options);
         return client.sendOptions(this.uid, text, options);
+
+    }
+
+    _translate(str, opts = {}) {
+        if (str.indexOf("_") === 0) {
+            return this._(str.substr(1), opts._params);
+        }
+
+        return str;
+    }
+
+    _translateButtons(btns, opts = {}) {
+
+        if (btns) {
+
+            for (let btn in btns) {
+
+                if (btns.hasOwnProperty(btn)) {
+
+                    btns[btn] = this._translate(btns[btn], opts);
+                }
+
+            }
+
+        }
+
+        return btns;
+
     }
 
     send(text, btns, opts = {}) {
 
-        if (text.indexOf("_") === 0) {
+        text = this._translate(text, opts);
 
-            text = this._(text.substr(1), opts._params);
-        }
-        
+        btns = this._translateButtons(btns, opts);
+
+
         return btns ? client.sendOptions(this.uid, text, btns) : client.sendText(this.uid, text);
     }
 
@@ -177,6 +208,26 @@ module.exports = class Request {
     }
 
     sendMessage(message) {
+
+        try {
+
+            let elements = message.attachment.payload.elements;
+
+            elements.forEach((el) => {
+
+                el.buttons.forEach((btn) => {
+
+                    if (btn.title) {
+                        btn.title = this._translate(btn.title);
+                    }
+
+                });
+
+            });
+
+        } catch (e) {
+            // it's ok, pass!
+        }
 
         return client.sendMessage(this.uid, message);
     }
