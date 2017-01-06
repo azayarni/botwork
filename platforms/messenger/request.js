@@ -15,6 +15,7 @@ module.exports = class Request {
         this._isYes = this._isYes.bind(this);
         this._isNo = this._isNo.bind(this);
         this._isSkip = this._isSkip.bind(this);
+        this._isBack  = this._isBack .bind(this);
         this._translate = this._translate.bind(this);
         this._translateButtons = this._translateButtons.bind(this);
     }
@@ -62,6 +63,19 @@ module.exports = class Request {
 
         this.skip = this._isSkip(words) || this.yes;
 
+        this.back = this._isBack(this.payload);
+
+    }
+
+    _isBack(input) {
+
+        let answer = false;
+
+        if (input.indexOf('$back') != -1 || input.trim().toLowerCase() === 'back') {
+            answer = true;
+        }
+
+        return answer;
     }
 
     _isSkip(words) {
