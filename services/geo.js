@@ -5,7 +5,7 @@ module.exports = (config) => {
 
     return {
 
-        recode(lat, lng, cb) {
+        recode(lat, lng) {
 
             var query = {
                 key: config.gmaps_key,
@@ -16,6 +16,7 @@ module.exports = (config) => {
             return new Promise((resolve, reject) => {
 
                 restler.get("https://maps.googleapis.com/maps/api/geocode/json", { query: query, parser: restler.parsers.json }).on('complete', (res) => {
+                    
                     if (res instanceof Error) {
                         return reject(res);
                     }
@@ -24,19 +25,20 @@ module.exports = (config) => {
 
                     if (!res.results || !res.results[0]) {
                         let err = new Error("Could not geocode the address");
-                        console.log("failed to recode coords", lat, lng);
                         return reject(err);
                     }
 
-                    res.results[0].address_components.forEach((row) => {
-                        if (row.types.indexOf("administrative_area_level_1") === 0) {
-                            loc.city = row.long_name;
-                            loc.city_short = row.short_name;
+                    for (row of res.results) {
+                        if (row.types.indexOf("locality") === 0) {
+                            loc.city = row.address_components[0].long_name;
+                            loc.city_id = row.place_id;
                         } else if (row.types.indexOf("country") === 0) {
-                            loc.country = row.long_name;
-                            loc.code = row.short_name;
+                            loc.country = row.address_components[0].long_name;
+                            loc.code = row.address_components[0].short_name;
                         }
-                    });
+                    }
+
+                    loc.point = {lat, lng};
 
                     resolve(loc);
 
@@ -63,19 +65,26 @@ module.exports = (config) => {
                         var loc = {};
 
                         if (!res.results[0]) {
-                            console.log("geocoding failed", address);
-                            return reject();
+                            let err = new Error("Could not geocode the address");
+                            return reject(err);
                         }
 
-                        res.results[0].address_components.forEach((row) => {
-                            if (row.types.indexOf("locality") === 0) {
+                        //console.log(res.results[0].address_components);
+
+                        loc.point = res.results[0].geometry.location;
+                        loc.city_id = res.results[0].place_id;
+
+                        for (row of res.results[0].address_components) {
+
+                            console.log(row)
+
+                            if (row.types.indexOf("locality") != -1) {
                                 loc.city = row.long_name;
-                                loc.city_short = row.short_name;
                             } else if (row.types.indexOf("country") === 0) {
                                 loc.country = row.long_name;
                                 loc.code = row.short_name;
                             }
-                        });
+                        }
 
                         resolve(loc);
                     }

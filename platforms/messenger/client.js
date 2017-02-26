@@ -60,6 +60,8 @@ const $this = {
                 payload = tmp;
             }
 
+            title = String(title);
+
             let btn = {
                 content_type: (payload === "_location" ? "location" : "text"),
                 title: title.substr(0, 20),
@@ -192,7 +194,7 @@ const $this = {
 
                     // throw inactive user event
                     if (body.error.code == 200) {
-                        $app.service("event").emit("user_blocked", recipient_id);
+                        event.emit("user_blocked", recipient_id);
                     }
 
                     // resolve even if failed
@@ -229,13 +231,13 @@ const $this = {
         });
     },
 
-    setStartButton() {
+    setStartButton(opts) {
         let params = {
             "setting_type": "call_to_actions",
             "thread_state": "new_thread",
             "call_to_actions": [
                 {
-                    "payload": "$start"
+                    "payload": opts.button
                 }
             ]
         };
@@ -243,23 +245,33 @@ const $this = {
         return $this.makeRequest("/me/thread_settings", params, "POST");
     },
 
-    setGreeting() {
+    setGreeting(opts) {
         let params = {
             "setting_type": "greeting",
             "greeting": {
-                "text": settings.greeting
+                "text": opts.greeting
             }
         };
 
         return $this.makeRequest("/me/thread_settings", params, "POST");
     },
 
-    setMenu(user_id) {
+    setExtensionDomain(domain, action = "add") {
+        let params = {
+            "setting_type": "domain_whitelisting",
+            "domain_action_type": action,
+            "whitelisted_domains": [domain]
+        };
+
+        return $this.makeRequest("/me/thread_settings", params, "POST");
+    },
+
+    setMenu(opts) {
 
         let params = {
             setting_type: "call_to_actions",
             thread_state: "existing_thread",
-            call_to_actions: settings.menu
+            call_to_actions: opts.menu
         };
 
         return $this.makeRequest("/me/thread_settings", params, "POST");
@@ -291,10 +303,10 @@ const $this = {
         });
     },
 
-    setupCTA() {
-        //$this.setStartButton().then(console.log).catch(console.log);
-        $this.setMenu().then(console.log).catch(console.log);
-        //$this.setGreeting().then(console.log).catch(console.log);
+    setupCTA(opts) {
+        $this.setStartButton(opts).then(console.log).catch(console.log);
+        $this.setMenu(opts).then(console.log).catch(console.log);
+        $this.setGreeting(opts).then(console.log).catch(console.log);
     }
 };
 

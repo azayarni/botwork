@@ -20,7 +20,7 @@ module.exports = class Request {
     parseRequestMessage(req) {
 
         this.uid = req.sender.id;
-        this.text = "";
+        this.text = req.message ? req.message.text : "";
 
         if (req.postback) {
             this.payload = req.postback.payload;
@@ -37,7 +37,6 @@ module.exports = class Request {
             this.payload = req.message.quick_reply.payload;
         } else if (req.message.text) {
             this.payload = req.message.text;
-            this.text = req.message.text;
         } else if (req.message.attachments) {
             this.payload = "_" + req.message.attachments[0].type;
             this.is_file = true;
@@ -59,7 +58,6 @@ module.exports = class Request {
         this.no = this.isNo(words);
 
         this.skip = this.isSkip(words) || this.yes;
-
     }
 
     isSkip(words) {
@@ -180,7 +178,7 @@ module.exports = class Request {
 
         return client.sendMessage(this.uid, message);
     }
-
+    
     getUser() {
         return client.getUser(this.uid);
     }
