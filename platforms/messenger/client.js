@@ -129,11 +129,12 @@ const $this = {
         return $this.sendMessage(recipient_id, message);
     },
 
-    sendGeneric(recipient_id, elements) {
+    sendGeneric(recipient_id, elements, aspect_ratio = "horizontal") {
 
         let message = {
             attachment: {
                 type: "template",
+                image_aspect_ratio : aspect_ratio,
                 payload: {
                     template_type: "generic",
                     elements: elements

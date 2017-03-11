@@ -162,9 +162,9 @@ module.exports = class Request {
         return client.sendList(this.uid, elements, first);
     }
 
-    sendGeneric(elements) {
+    sendGeneric(elements, aspect_ratio = "horizontal") {
 
-        return client.sendGeneric(this.uid, elements);
+        return client.sendGeneric(this.uid, elements, aspect_ratio);
     }
 
     sendUrlButton(text, title, url, ratio = "full") {
