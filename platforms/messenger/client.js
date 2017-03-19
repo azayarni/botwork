@@ -134,8 +134,8 @@ const $this = {
         let message = {
             attachment: {
                 type: "template",
-                image_aspect_ratio : aspect_ratio,
                 payload: {
+                    image_aspect_ratio : aspect_ratio,
                     template_type: "generic",
                     elements: elements
                 }
