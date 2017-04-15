@@ -179,7 +179,8 @@ module.exports = class Request {
     }
 
     _translate(str, opts = {}) {
-        if (str.indexOf("_") === 0) {
+        
+        if (typeof str === "string" &&  str.indexOf("_") === 0) {
             return this._(str.substr(1), opts._params);
         }
 
