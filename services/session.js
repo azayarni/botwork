@@ -80,7 +80,7 @@ module.exports = (config) => {
 
                     delete sessions[id];
 
-                    event.emit("session_expired", row);
+                    //event.emit("session_expired", row);
 
                     if (config.verbose) console.log("session removed", id);
                 }
