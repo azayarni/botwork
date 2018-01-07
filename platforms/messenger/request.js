@@ -175,7 +175,6 @@ module.exports = class Request {
 
         options = this._translateButtons(options);
         return client.sendOptions(this.uid, text, options);
-
     }
 
     _translate(str, opts = {}) {

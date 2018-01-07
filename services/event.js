@@ -1,8 +1,8 @@
 const events = require("events");
 
-module.exports = (config) => {
+let emitter = null;
 
-    let emitter = null;
+module.exports = (config) => {
 
     function getEmitter() {
         return emitter ? emitter : emitter = new events.EventEmitter();
@@ -15,7 +15,8 @@ module.exports = (config) => {
         },
 
         emit(name, data) {
-            getEmitter().emit(name, data);;
+
+            getEmitter().emit(name, data);
         }
     }
 
