@@ -13,7 +13,7 @@ const $this = {
         )
     },
 
-    sendMenu(recipient_id, text, buttons) {
+    sendMenu(recipient_id, text, buttons, notification_type = "REGULAR") {
 
         let menu = {
             type: "template",
@@ -41,11 +41,12 @@ const $this = {
 
         return $this.sendMessage(
             recipient_id,
-            { attachment: menu }
+            { attachment: menu },
+            notification_type
         );
     },
 
-    sendOptions(recipient_id, text, options = { yes: "Yes, please.", no: "No, thanx" }) {
+    sendOptions(recipient_id, text, options = { yes: "Yes, please.", no: "No, thanx" }, notification_type = "REGULAR") {
         if (!options) {
             return $this.sendText(recipient_id, text);
         }
@@ -73,11 +74,12 @@ const $this = {
 
         return $this.sendMessage(
             recipient_id,
-            { quick_replies: buttons, text: text }
+            { quick_replies: buttons, text: text },
+            notification_type
         );
     },
 
-    sendUrlButton(recipient_id, text, title, url, ratio = "full") {
+    sendUrlButton(recipient_id, text, title, url, ratio = "full", notification_type = "REGULAR") {
 
         let btn = {
             "type": "web_url",
@@ -97,7 +99,8 @@ const $this = {
 
         return $this.sendMessage(
             recipient_id,
-            { attachment: menu }
+            { attachment: menu },
+            notification_type,
         );
     },
 
@@ -145,12 +148,13 @@ const $this = {
         return $this.sendMessage(recipient_id, message);
     },
 
-    sendMessage(recipient_id, message) {
+    sendMessage(recipient_id, message, notification_type = "REGULAR") {
 
         let data = {
             recipient: {
                 id: recipient_id
             },
+            notification_type,
             message: message
         };
 
