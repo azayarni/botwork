@@ -56,7 +56,7 @@ const $this = {
         _.forEach(options, (title, payload) => {
 
             if (typeof title === "object" && title.data) {
-                let tmp = JSON.stringify({c : payload, d : title.data});
+                let tmp = JSON.stringify({ c: payload, d: title.data });
                 title = title.title;
                 payload = tmp;
             }
@@ -138,7 +138,7 @@ const $this = {
             attachment: {
                 type: "template",
                 payload: {
-                    image_aspect_ratio : aspect_ratio,
+                    image_aspect_ratio: aspect_ratio,
                     template_type: "generic",
                     elements: elements
                 }
@@ -274,12 +274,15 @@ const $this = {
     setMenu(opts) {
 
         let params = {
-            setting_type: "call_to_actions",
-            thread_state: "existing_thread",
-            call_to_actions: opts.menu
+            "persistent_menu": [
+                {
+                    "locale": "default",
+                    call_to_actions: opts.menu
+                }
+            ]
         };
 
-        return $this.makeRequest("/me/thread_settings", params, "POST");
+        return $this.makeRequest("/me/messenger_profile", params, "POST");
     },
 
     makeRequest(uri, params, method = "GET") {
