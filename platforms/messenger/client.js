@@ -145,8 +145,24 @@ const $this = {
                 }
             },
         };
-
+        
         return $this.sendMessage(recipient_id, message);
+    },
+    
+    sendMedia(recipient_id, elements, opts = {}) {
+        
+        let message = {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "media",
+                    elements: elements,
+                    shareable : true
+                }
+            },
+        };
+
+        return $this.sendMessage(recipient_id, message, opts);
     },
 
     sendMessage(recipient_id, message, opts = {}) {
