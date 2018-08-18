@@ -148,33 +148,38 @@ module.exports = class Request {
         onNo(this, false);   
     }
 
-    sendText(text) {
-        return client.sendText(this.uid, text);
+    sendText(text, opts = {}) {
+        return client.sendText(this.uid, text, opts);
     }
 
-    sendMenu(text, buttons) {
+    sendMedia(elements, opts = {}) {
 
-        return client.sendMenu(this.uid, text, buttons);
+        return client.sendMedia(this.uid, elements, opts);
     }
 
-    sendList(elements, first = "compact") {
+    sendMenu(text, buttons, opts = {}) {
 
-        return client.sendList(this.uid, elements, first);
+        return client.sendMenu(this.uid, text, buttons, opts);
     }
 
-    sendGeneric(elements, aspect_ratio = "horizontal") {
+    sendList(elements, first = "compact", opts = {}) {
 
-        return client.sendGeneric(this.uid, elements, aspect_ratio);
+        return client.sendList(this.uid, elements, first, opts);
     }
 
-    sendUrlButton(text, title, url, ratio = "full") {
-        return client.sendUrlButton(this.uid, text, title, url, ratio);
+    sendGeneric(elements, aspect_ratio = "horizontal", opts = {}) {
+
+        return client.sendGeneric(this.uid, elements, aspect_ratio, opts);
     }
 
-    sendOptions(text, options = { $yes: "_btn_yes", $no: "_btn_no" }) {
+    sendUrlButton(text, title, url, ratio = "full", opts = {}) {
+        return client.sendUrlButton(this.uid, text, title, url, ratio, opts);
+    }
+
+    sendOptions(text, options = { $yes: "_btn_yes", $no: "_btn_no" }, opts = {}) {
 
         options = this._translateButtons(options);
-        return client.sendOptions(this.uid, text, options);
+        return client.sendOptions(this.uid, text, options, opts);
     }
 
     _translate(str, opts = {}) {
