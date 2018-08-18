@@ -5,13 +5,23 @@ module.exports = (config) => {
 
     return {
 
+        queries = [],
+        cache = [],
+        rcache = {},
+
         recode(lat, lng) {
 
             var query = {
                 key: config.gmaps_key,
-                latlng: lat + "," + lng,
-                //q: opts.query,
+                latlng: lat + "," + lng
             };
+
+            let cache_key = query.latlng.replace(".", "-").replace(",", "-");
+
+            if (rcache[cache_key]) {
+                console.log("re geo cache")
+                return Promise.resolve(rcache[cache_key]);
+            }
 
             return new Promise((resolve, reject) => {
 
@@ -40,6 +50,8 @@ module.exports = (config) => {
 
                     loc.point = {lat, lng};
 
+                    rcache[cache_key] = loc;
+
                     resolve(loc);
 
                 });
@@ -54,6 +66,13 @@ module.exports = (config) => {
                 address: address,
                 //q: opts.query,
             };
+
+            let cached_idx = queries.indexOf(address);
+
+            if (cached_idx !== -1) {
+                console.log("geo cache");
+                return Promise.resolve(cache[cached_idx]);
+            }
 
             return new Promise((resolve, reject) => {
 
@@ -76,8 +95,6 @@ module.exports = (config) => {
 
                         for (row of res.results[0].address_components) {
 
-                            console.log(row)
-
                             if (row.types.indexOf("locality") != -1) {
                                 loc.city = row.long_name;
                             } else if (row.types.indexOf("country") === 0) {
@@ -85,6 +102,9 @@ module.exports = (config) => {
                                 loc.code = row.short_name;
                             }
                         }
+
+                        cache.push(loc);
+                        queries.push(address);
 
                         resolve(loc);
                     }

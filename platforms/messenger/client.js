@@ -6,14 +6,15 @@ const
 
 const $this = {
 
-    sendText(recipient_id, text) {
+    sendText(recipient_id, text, opts = {}) {
         return $this.sendMessage(
             recipient_id,
-            { text: text }
+            { text: text },
+            opts
         )
     },
 
-    sendMenu(recipient_id, text, buttons, notification_type = "REGULAR") {
+    sendMenu(recipient_id, text, buttons, opts = {}) {
 
         let menu = {
             type: "template",
@@ -42,11 +43,11 @@ const $this = {
         return $this.sendMessage(
             recipient_id,
             { attachment: menu },
-            notification_type
+            opts
         );
     },
 
-    sendOptions(recipient_id, text, options = { yes: "Yes, please.", no: "No, thanx" }, notification_type = "REGULAR") {
+    sendOptions(recipient_id, text, options = { yes: "Yes, please.", no: "No, thanx" }, opts = {}) {
         if (!options) {
             return $this.sendText(recipient_id, text);
         }
@@ -75,11 +76,11 @@ const $this = {
         return $this.sendMessage(
             recipient_id,
             { quick_replies: buttons, text: text },
-            notification_type
+            opts
         );
     },
 
-    sendUrlButton(recipient_id, text, title, url, ratio = "full", notification_type = "REGULAR") {
+    sendUrlButton(recipient_id, text, title, url, ratio = "full", opts = {}) {
 
         let btn = {
             "type": "web_url",
@@ -100,7 +101,7 @@ const $this = {
         return $this.sendMessage(
             recipient_id,
             { attachment: menu },
-            notification_type,
+            opts,
         );
     },
 
@@ -148,15 +149,20 @@ const $this = {
         return $this.sendMessage(recipient_id, message);
     },
 
-    sendMessage(recipient_id, message, notification_type = "REGULAR") {
+    sendMessage(recipient_id, message, opts = {}) {
 
         let data = {
             recipient: {
                 id: recipient_id
             },
-            notification_type,
             message: message
         };
+
+        Object.assign(data, opts);
+
+        if (!data.messaging_type) {
+            data.messaging_type = "RESPONSE";
+        }
 
         return $this.send(recipient_id, data);
     },
@@ -191,7 +197,7 @@ const $this = {
                 }
 
                 if (body.error) {
-                    if (config.get("verbose")) console.error("fb error", recipient_id, body.error.code, body.error.message);
+                    console.error("fb error", recipient_id, body.error.code, body.error.message);
 
                     if (retry < 1) {
                         return $this.send(recipient_id, data, retry + 1);
