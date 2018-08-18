@@ -156,8 +156,8 @@ const $this = {
                 type: "template",
                 payload: {
                     template_type: "media",
-                    elements: elements,
-                    shareable : true
+                    elements,
+                    sharable : true
                 }
             },
         };
