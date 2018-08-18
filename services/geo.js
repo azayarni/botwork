@@ -5,9 +5,9 @@ module.exports = (config) => {
 
     return {
 
-        queries = [],
-        cache = [],
-        rcache = {},
+        queries : [],
+        cache : [],
+        rcache : {},
 
         recode(lat, lng) {
 
@@ -18,9 +18,9 @@ module.exports = (config) => {
 
             let cache_key = query.latlng.replace(".", "-").replace(",", "-");
 
-            if (rcache[cache_key]) {
+            if (this.rcache[cache_key]) {
                 console.log("re geo cache")
-                return Promise.resolve(rcache[cache_key]);
+                return Promise.resolve(this.rcache[cache_key]);
             }
 
             return new Promise((resolve, reject) => {
@@ -50,7 +50,7 @@ module.exports = (config) => {
 
                     loc.point = {lat, lng};
 
-                    rcache[cache_key] = loc;
+                    this.rcache[cache_key] = loc;
 
                     resolve(loc);
 
@@ -67,11 +67,11 @@ module.exports = (config) => {
                 //q: opts.query,
             };
 
-            let cached_idx = queries.indexOf(address);
+            let cached_idx = this.queries.indexOf(address);
 
             if (cached_idx !== -1) {
                 console.log("geo cache");
-                return Promise.resolve(cache[cached_idx]);
+                return Promise.resolve(this.cache[cached_idx]);
             }
 
             return new Promise((resolve, reject) => {
@@ -103,8 +103,8 @@ module.exports = (config) => {
                             }
                         }
 
-                        cache.push(loc);
-                        queries.push(address);
+                        this.cache.push(loc);
+                        this.queries.push(address);
 
                         resolve(loc);
                     }
