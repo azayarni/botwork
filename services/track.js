@@ -7,7 +7,9 @@ module.exports = (config) => {
 
         event(id, category, action, label) {
 
-            if (!config.track) return;
+            //if (!config.track) return;
+
+            console.log(id, category, action, label)
 
             var visitor = ua(config.ga_id, id, { strictCidFormat: false });
 
