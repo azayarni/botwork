@@ -9,8 +9,6 @@ module.exports = (config) => {
 
             if (!config.track) return;
 
-            console.log(config, id, category, action, label)
-
             var visitor = ua(config.ga_id, id, { strictCidFormat: false });
 
             if (label) visitor.event(category, action, label).send();
